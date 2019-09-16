@@ -2,7 +2,9 @@
 #include <Servo.h>
 #include <OneButton.h>
 #include <TimerOne.h>
+#include <LiquidCrystal_I2C.h>
 
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 Servo servo;
 OneButton buttonLeft(9, true);
 OneButton buttonRight(7, true);
@@ -63,6 +65,18 @@ void setup()
   buttonRight.attachDuringLongPress(rightLongClick);
 
   Timer1.initialize(16666);
+
+  lcd.init(); // initialize the lcd
+  // Print a message to the LCD.
+  lcd.backlight();
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Find left");
+  lcd.setCursor(0, 1);
+  lcd.print("Timer1: ");
+  lcd.print(left);
+  lcd.setContrast(127);
+  lcd.setBacklight(127);
 }
 
 void loop()
@@ -103,6 +117,12 @@ void leftClick()
     left--;
     Serial.print("Left: ");
     Serial.println(left);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Find left");
+    lcd.setCursor(0, 1);
+    lcd.print("Timer1: ");
+    lcd.print(left);
     break;
   }
   case FIND_RIGHT:
@@ -110,6 +130,12 @@ void leftClick()
     right--;
     Serial.print("Right: ");
     Serial.println(right);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Find right");
+    lcd.setCursor(0, 1);
+    lcd.print("Timer1: ");
+    lcd.print(right);
     break;
   }
   case SWEEP:
@@ -117,11 +143,22 @@ void leftClick()
     sweepDelay++;
     Serial.print("Sweep delay: ");
     Serial.println(sweepDelay);
+    lcd.setCursor(0, 1);
+    lcd.print("               ");
+    lcd.setCursor(0, 1);
+    lcd.print("Sweep delay ");
+    lcd.print(sweepDelay);
     break;
   }
   case JUMP:
   {
     Timer1.pwm(pwmPin, left / 4.0);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Jumping");
+    lcd.setCursor(0, 1);
+    lcd.print("Timer1: ");
+    lcd.print(left);
     break;
   }
   }
@@ -135,11 +172,23 @@ void rightClick()
     left++;
     Serial.print("Left: ");
     Serial.println(left);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Find left");
+    lcd.setCursor(0, 1);
+    lcd.print("Timer1: ");
+    lcd.print(left);
     break;
   case FIND_RIGHT:
     right++;
     Serial.print("Right: ");
     Serial.println(right);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Find right");
+    lcd.setCursor(0, 1);
+    lcd.print("Timer1: ");
+    lcd.print(right);
     break;
   case SWEEP:
     sweepDelay--;
@@ -149,9 +198,20 @@ void rightClick()
     }
     Serial.print("Sweep delay: ");
     Serial.println(sweepDelay);
+    lcd.setCursor(0, 1);
+    lcd.print("               ");
+    lcd.setCursor(0, 1);
+    lcd.print("Sweep delay ");
+    lcd.print(sweepDelay);
     break;
   case JUMP:
     Timer1.pwm(pwmPin, right / 4.0);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Jumping");
+    lcd.setCursor(0, 1);
+    lcd.print("Timer1: ");
+    lcd.print(right);
     break;
   }
 }
@@ -165,22 +225,46 @@ void centerClick()
     Serial.println("Finding right...");
     Serial.print("Right: ");
     Serial.println(right);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Find right");
+    lcd.setCursor(0, 1);
+    lcd.print("Timer1: ");
+    lcd.print(right);
     break;
   case FIND_RIGHT:
     currentState = SWEEP;
     currentPos = right;
     direction = -1;
     Serial.println("Sweeping");
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Sweeping");
+    lcd.setCursor(0, 1);
+    lcd.print("Sweep delay ");
+    lcd.print(sweepDelay);
     break;
   case SWEEP:
     currentState = JUMP;
     Serial.println("Jumping...");
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Jumping");
+    lcd.setCursor(0, 1);
+    lcd.print("Timer1: ");
+    lcd.print(left);
     break;
   case JUMP:
     currentState = FIND_LEFT;
     Serial.println("Finding left...");
     Serial.print("Left: ");
     Serial.println(left);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Find left");
+    lcd.setCursor(0, 1);
+    lcd.print("Timer1: ");
+    lcd.print(left);
     break;
   }
 }
